@@ -7,6 +7,7 @@ import { BranchConfig, BranchUpgradeConfig } from '../../common';
 import { embedChangelogs } from '../changelog';
 import { flattenUpdates } from './flatten';
 import { generateBranchConfig } from './generate';
+import { securityUpdatesOnly } from './security';
 import { Merge } from 'type-fest';
 
 /**
@@ -36,7 +37,9 @@ export async function branchifyUpgrades(
   packageFiles: Record<string, any[]>
 ): Promise<BranchifiedConfig> {
   logger.debug('branchifyUpgrades');
-  const updates = await flattenUpdates(config, packageFiles);
+  const updates = await securityUpdatesOnly(
+    await flattenUpdates(config, packageFiles)
+  );
   logger.debug(
     `${updates.length} flattened updates found: ${updates
       .map((u) => u.depName)
